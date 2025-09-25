@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Result</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+
+  <div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-6">
+    <h2 id="name" class="text-xl font-bold mb-2"></h2>
+    <p><strong>Roll:</strong> <span id="roll"></span></p>
+    <p><strong>Reg:</strong> <span id="reg"></span></p>
+    <p><strong>Session:</strong> <span id="session"></span></p>
+    <p><strong>Exam:</strong> <span id="exam"></span></p>
+    <p><strong>Group:</strong> <span id="group"></span></p>
+    <p class="mt-2 font-semibold">Result: <span id="result"></span></p>
+
+    <h3 class="mt-4 font-bold">Subjects & Marks</h3>
+    <div id="subjects" class="mt-2 space-y-2"></div>
+
+    <button id="downloadBtn" class="mt-4 w-full bg-green-500 text-white p-2 rounded">
+      Download PDF
+    </button>
+  </div>
+
+  <script>
+    const student = {
+      roll: '549903',
+      reg: 'REG-549903',
+      name: 'AKANKSH PADMANABHA SHETTY',
+      session: 'JUNE 2025',
+      exam: 'Executive Programme',
+      group: 'Group-1',
+      result: 'Pass',
+      subjects: [
+        {name:'Jurisprudence, Interpretation and General Laws', marks:53},
+        {name:'Company Law and Practice', marks:47},
+        {name:'Setting up of Business, Industrial and Labour Laws', marks:58},
+        {name:'Corporate Accounting and Financial Management', marks:61},
+      ]
+    };
+
+    // Display student info
+    document.getElementById('name').textContent = student.name;
+    document.getElementById('roll').textContent = student.roll;
+    document.getElementById('reg').textContent = student.reg;
+    document.getElementById('session').textContent = student.session;
+    document.getElementById('exam').textContent = student.exam;
+    document.getElementById('group').textContent = student.group;
+    document.getElementById('result').textContent = student.result;
+
+    const subjectsDiv = document.getElementById('subjects');
+    student.subjects.forEach(sub => {
+      const div = document.createElement('div');
+      div.className = "flex justify-between bg-gray-100 p-2 rounded";
+      div.innerHTML = `<span>${sub.name}</span><span>${sub.marks}</span>`;
+      subjectsDiv.appendChild(div);
+    });
+
+    // PDF download functionality
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("Student Result", 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Name: ${student.name}`, 20, 30);
+      doc.text(`Roll: ${student.roll}`, 20, 37);
+      doc.text(`Reg: ${student.reg}`, 20, 44);
+      doc.text(`Session: ${student.session}`, 20, 51);
+      doc.text(`Exam: ${student.exam}`, 20, 58);
+      doc.text(`Group: ${student.group}`, 20, 65);
+      doc.text(`Result: ${student.result}`, 20, 72);
+      doc.text("Subjects & Marks:", 20, 82);
+      student.subjects.forEach((sub, idx) => {
+        doc.text(`${sub.name}: ${sub.marks}`, 25, 90 + idx * 7);
+      });
+      doc.save(`${student.roll}_result.pdf`);
+    });
+  </script>
+</body>
+    </html>
