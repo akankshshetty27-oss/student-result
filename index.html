@@ -10,20 +10,30 @@
 <body class="bg-gray-100 p-4">
 
   <div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-6">
-    <h2 id="name" class="text-xl font-bold mb-2"></h2>
-    <p><strong>Roll:</strong> <span id="roll"></span></p>
-    <p><strong>Reg:</strong> <span id="reg"></span></p>
-    <p><strong>Session:</strong> <span id="session"></span></p>
-    <p><strong>Exam:</strong> <span id="exam"></span></p>
-    <p><strong>Group:</strong> <span id="group"></span></p>
-    <p class="mt-2 font-semibold">Result: <span id="result"></span></p>
+    <!-- Form -->
+    <div id="formDiv">
+      <h2 class="text-xl font-bold mb-4">Enter your details</h2>
+      <input type="text" id="rollInput" placeholder="Roll No." class="border p-2 w-full mb-2 rounded">
+      <input type="text" id="regInput" placeholder="Registration No." class="border p-2 w-full mb-4 rounded">
+      <button id="checkBtn" class="w-full bg-blue-500 text-white p-2 rounded">Show Result</button>
+      <p id="errorMsg" class="text-red-500 mt-2 hidden">Invalid Roll No. or Registration No.</p>
+    </div>
 
-    <h3 class="mt-4 font-bold">Subjects & Marks</h3>
-    <div id="subjects" class="mt-2 space-y-2"></div>
+    <!-- Result Card -->
+    <div id="resultDiv" class="hidden">
+      <h2 id="name" class="text-xl font-bold mb-2"></h2>
+      <p><strong>Roll:</strong> <span id="roll"></span></p>
+      <p><strong>Reg:</strong> <span id="reg"></span></p>
+      <p><strong>Session:</strong> <span id="session"></span></p>
+      <p><strong>Exam:</strong> <span id="exam"></span></p>
+      <p><strong>Group:</strong> <span id="group"></span></p>
+      <p class="mt-2 font-semibold">Result: <span id="result"></span></p>
 
-    <button id="downloadBtn" class="mt-4 w-full bg-green-500 text-white p-2 rounded">
-      Download PDF
-    </button>
+      <h3 class="mt-4 font-bold">Subjects & Marks</h3>
+      <div id="subjects" class="mt-2 space-y-2"></div>
+
+      <button id="downloadBtn" class="mt-4 w-full bg-green-500 text-white p-2 rounded">Download PDF</button>
+    </div>
   </div>
 
   <script>
@@ -43,24 +53,37 @@
       ]
     };
 
-    // Display student info
-    document.getElementById('name').textContent = student.name;
-    document.getElementById('roll').textContent = student.roll;
-    document.getElementById('reg').textContent = student.reg;
-    document.getElementById('session').textContent = student.session;
-    document.getElementById('exam').textContent = student.exam;
-    document.getElementById('group').textContent = student.group;
-    document.getElementById('result').textContent = student.result;
+    document.getElementById('checkBtn').addEventListener('click', () => {
+      const rollInput = document.getElementById('rollInput').value;
+      const regInput = document.getElementById('regInput').value;
 
-    const subjectsDiv = document.getElementById('subjects');
-    student.subjects.forEach(sub => {
-      const div = document.createElement('div');
-      div.className = "flex justify-between bg-gray-100 p-2 rounded";
-      div.innerHTML = `<span>${sub.name}</span><span>${sub.marks}</span>`;
-      subjectsDiv.appendChild(div);
+      if (rollInput === student.roll && regInput === student.reg) {
+        document.getElementById('formDiv').classList.add('hidden');
+        document.getElementById('resultDiv').classList.remove('hidden');
+
+        document.getElementById('name').textContent = student.name;
+        document.getElementById('roll').textContent = student.roll;
+        document.getElementById('reg').textContent = student.reg;
+        document.getElementById('session').textContent = student.session;
+        document.getElementById('exam').textContent = student.exam;
+        document.getElementById('group').textContent = student.group;
+        document.getElementById('result').textContent = student.result;
+
+        const subjectsDiv = document.getElementById('subjects');
+        subjectsDiv.innerHTML = '';
+        student.subjects.forEach(sub => {
+          const div = document.createElement('div');
+          div.className = "flex justify-between bg-gray-100 p-2 rounded";
+          div.innerHTML = `<span>${sub.name}</span><span>${sub.marks}</span>`;
+          subjectsDiv.appendChild(div);
+        });
+
+      } else {
+        document.getElementById('errorMsg').classList.remove('hidden');
+      }
     });
 
-    // PDF download functionality
+    // PDF download
     document.getElementById('downloadBtn').addEventListener('click', () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
